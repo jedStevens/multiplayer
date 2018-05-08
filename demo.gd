@@ -12,6 +12,7 @@ var username = "[no username]"
 
 func _ready():
 	if OS.get_environment("JED_SERVER") == "1":
+		print("Running as server")
 		var peer = NetworkedMultiplayerENet.new()
 		peer.create_server(SERVER_PORT, MAX_PLAYERS)
 		get_tree().set_network_peer(peer)
@@ -63,4 +64,3 @@ func _on_connect_pressed():
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_client(SERVER_IP, SERVER_PORT)
 	get_tree().set_network_peer(peer)
-
