@@ -17,8 +17,7 @@ var my_info = { 'name' : username, 'favorite_color' : Color8(255, 0, 255) }
 
 func _ready():
 	seed(OS.get_unix_time())
-	for i in range(10):
-		print(NameGenerator.gen_name())
+	
 	if OS.get_environment("JED_SERVER") == "1":
 		print("Running as server")
 		var peer = NetworkedMultiplayerENet.new()
@@ -57,7 +56,7 @@ remote func register_player(id, info):
 	player_info[id] = info
 	# If I'm the server, let the new guy know about existing players
 	if get_tree().is_network_server():
-		print("Got new player: ", info['name'])
+		print("Got new player: ", info['name'], id)
 	# Send my info to new player
 		rpc_id(id, "register_player", 1, my_info)
 		# Send the info of existing players
