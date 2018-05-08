@@ -10,12 +10,23 @@ var MAX_PLAYERS = 2
 
 var username = "Jed"
 
+# Player info, associate ID to data
+var player_info = {}
+# Info we send to other players
+var my_info = { 'name' : username, 'favorite_color' : Color8(255, 0, 255) }
+
 func _ready():
+	seed(OS.get_unix_time())
+	for i in range(10):
+		print(NameGenerator.gen_name())
 	if OS.get_environment("JED_SERVER") == "1":
 		print("Running as server")
 		var peer = NetworkedMultiplayerENet.new()
 		peer.create_server(SERVER_PORT, MAX_PLAYERS)
 		get_tree().set_network_peer(peer)
+	else:
+		username = NameGenerator.gen_name()
+		my_info['name'] = username
 	
 	get_tree().connect("network_peer_connected", self, "_player_connected")
 	get_tree().connect("network_peer_disconnected", self, "_player_disconnected")
@@ -23,17 +34,11 @@ func _ready():
 	get_tree().connect("connection_failed", self, "_connected_fail")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
 
-# Player info, associate ID to data
-var player_info = {}
-# Info we send to other players
-var my_info = { name = username, favorite_color = Color8(255, 0, 255) }
-
 func _player_connected(id):
     pass # Will go unused, not useful here
 
 func _player_disconnected(id):
 	print("Player left: ", id)
-	player_info.erase(id) # Erase player from info
 	
 	rpc("unregister_player", (id))
 
@@ -52,7 +57,7 @@ remote func register_player(id, info):
 	player_info[id] = info
 	# If I'm the server, let the new guy know about existing players
 	if get_tree().is_network_server():
-		print("Got new player: ", info)
+		print("Got new player: ", info['name'])
 	# Send my info to new player
 		rpc_id(id, "register_player", 1, my_info)
 		# Send the info of existing players
@@ -69,7 +74,7 @@ remote func register_player(id, info):
 		node.text = player["name"]
 		$v.add_child(node)
 
-remote func unregister_player(id):
+sync func unregister_player(id):
 	# Store the info
 	player_info.erase(str(id))
 	# Call function to update lobby UI here
