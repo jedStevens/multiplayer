@@ -65,15 +65,16 @@ remote func register_player(id, info):
 	for k in player_info.keys():
 		var player = player_info[k]
 		var node = Label.new()
+		node.name = str(id)
 		node.text = player["name"]
 		$v.add_child(node)
 
 remote func unregister_player(id):
 	# Store the info
-	player_info.erase(id)	
+	player_info.erase(str(id))
 	# Call function to update lobby UI here
 	for x in $v.get_children():
-		if x.text == player_info[id]["name"]:
+		if x.name == str(id):
 			$v.remove_child(x)
 
 func _on_connect_pressed():
