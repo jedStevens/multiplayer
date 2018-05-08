@@ -32,14 +32,17 @@ func _player_connected(id):
     pass # Will go unused, not useful here
 
 func _player_disconnected(id):
-    player_info.erase(id) # Erase player from info
+	print("Player left: ", id)
+	player_info.erase(id) # Erase player from info
+	
+	rpc("unregister_player", (id))
 
 func _connected_ok():
     # Only called on clients, not server. Send my ID and info to all the other peers
     rpc("register_player", get_tree().get_network_unique_id(), my_info)
 
 func _server_disconnected():
-    pass # Server kicked us, show error and abort
+	print("kicked offline by server")
 
 func _connected_fail():
 	print("Connection Failure")
@@ -65,7 +68,17 @@ remote func register_player(id, info):
 		node.text = player["name"]
 		$v.add_child(node)
 
+remote func unregister_player(id):
+	# Store the info
+	player_info.erase(id)	
+	# Call function to update lobby UI here
+	for x in $v.get_children():
+		if x.text == player_info[id]["name"]:
+			$v.remove_child(x)
+
 func _on_connect_pressed():
+	for x in $v.get_children():
+		$v.remove_child(x)
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_client(SERVER_IP, SERVER_PORT)
 	get_tree().set_network_peer(peer)
