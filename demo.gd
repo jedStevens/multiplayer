@@ -8,7 +8,7 @@ var SERVER_IP = "165.227.45.244"
 var SERVER_PORT = 8080
 var MAX_PLAYERS = 2
 
-var username = "[no username]"
+var username = "Jed"
 
 func _ready():
 	if OS.get_environment("JED_SERVER") == "1":
@@ -45,20 +45,25 @@ func _connected_fail():
 	print("Connection Failure")
 
 remote func register_player(id, info):
-    # Store the info
-    player_info[id] = info
-    # If I'm the server, let the new guy know about existing players
-    if get_tree().is_network_server():
-        # Send my info to new player
-        rpc_id(id, "register_player", 1, my_info)
-        # Send the info of existing players
-        for peer_id in player_info:
-            rpc_id(id, "register_player", peer_id, player_info[peer_id])
-
-    # Call function to update lobby UI here
-    var node = Label.new()
-    node.text = info["name"]
-    $v.add_child(node)
+	# Store the info
+	player_info[id] = info
+	# If I'm the server, let the new guy know about existing players
+	if get_tree().is_network_server():
+		print("Got new player: ", info)
+	# Send my info to new player
+		rpc_id(id, "register_player", 1, my_info)
+		# Send the info of existing players
+		for peer_id in player_info:
+			rpc_id(id, "register_player", peer_id, player_info[peer_id])
+	
+	# Call function to update lobby UI here
+	for x in $v.get_children():
+		$v.remove_child(x)
+	for k in player_info.keys():
+		var player = player_info[k]
+		var node = Label.new()
+		node.text = player["name"]
+		$v.add_child(node)
 
 func _on_connect_pressed():
 	var peer = NetworkedMultiplayerENet.new()
