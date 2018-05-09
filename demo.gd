@@ -81,7 +81,7 @@ remote func register_player(id, info):
 
 sync func unregister_player(id, _user):
 	if str(id) in player_info.keys():
-		player_info.erase(str(id))
+		player_info.erase(id)
 	for x in $v.get_children():
 		print(x.text)
 		if x.text == _user['name']:
