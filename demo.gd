@@ -78,12 +78,14 @@ sync func unregister_player(id, _user):
 	if str(id) in player_info.keys():
 		player_info.erase(str(id))
 	for x in $v.get_children():
-		print(x.name)
+		print(x.text)
 		if x.text == _user['name']:
 			$v.remove_child(x)
 	# Call function to update lobby UI here
 
 func _on_connect_pressed():
+	if get_tree().get_network_unique_id() != 0:
+		rpc("unregister_player", get_tree().get_network_unique_id(), my_info)
 	for x in $v.get_children():
 		$v.remove_child(x)
 	var peer = NetworkedMultiplayerENet.new()
