@@ -52,7 +52,7 @@ func _connected_ok():
 
 func _server_disconnected():
 	print("kicked offline by server")
-	rpc("unregister_player", get_tree().get_network_unique_id(), username)
+	rpc("unregister_player", get_tree().get_network_unique_id(), my_info)
 
 func _connected_fail():
 	print("Connection Failure")
