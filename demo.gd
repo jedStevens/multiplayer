@@ -39,7 +39,7 @@ func _player_connected(id):
 func _player_disconnected(id):
 	print("Player left: ", player_info[id], " ", id)
 	
-	rpc("unregister_player", (id))
+	rpc("unregister_player", id, player_info[id])
 
 func _connected_ok():
     # Only called on clients, not server. Send my ID and info to all the other peers
@@ -47,7 +47,7 @@ func _connected_ok():
 
 func _server_disconnected():
 	print("kicked offline by server")
-	rpc("unregister_player", get_tree().get_network_unique_id())
+	rpc("unregister_player", get_tree().get_network_unique_id(), username)
 
 func _connected_fail():
 	print("Connection Failure")
@@ -74,13 +74,14 @@ remote func register_player(id, info):
 		node.text = player["name"]
 		$v.add_child(node)
 
-sync func unregister_player(id):
-	# Store the info
-	player_info.erase(str(id))
-	# Call function to update lobby UI here
+sync func unregister_player(id, _user):
+	print(_user)
 	for x in $v.get_children():
-		if x.name == str(id):
+		print(x.name)
+		if x.text == player_info[str(id)]['name']:
 			$v.remove_child(x)
+			player_info.erase(str(id))
+	# Call function to update lobby UI here
 
 func _on_connect_pressed():
 	for x in $v.get_children():
