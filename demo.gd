@@ -75,12 +75,12 @@ remote func register_player(id, info):
 		$v.add_child(node)
 
 sync func unregister_player(id, _user):
-	print(_user)
+	if str(id) in player_info.keys():
+		player_info.erase(str(id))
 	for x in $v.get_children():
 		print(x.name)
-		if x.text == player_info[str(id)]['name']:
+		if x.text == _user:
 			$v.remove_child(x)
-			player_info.erase(str(id))
 	# Call function to update lobby UI here
 
 func _on_connect_pressed():
