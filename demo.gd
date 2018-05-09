@@ -39,7 +39,8 @@ func _player_connected(id):
 func _player_disconnected(id):
 	print("Player left: ", player_info[id], " ", id)
 	
-	rpc("unregister_player", id, player_info[id])
+	rpc("unregister_player", id, player_info[str(id)])
+	
 
 func _connected_ok():
     # Only called on clients, not server. Send my ID and info to all the other peers
