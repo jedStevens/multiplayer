@@ -41,7 +41,7 @@ func _player_disconnected(id):
 	
 	rpc("unregister_player", id, player_info[id])
 	if id in player_info.keys():
-		player_info.erase(str(id))
+		player_info.erase(id)
 	if id in player_info.keys():
 		print( "left over", str(id))
 	
