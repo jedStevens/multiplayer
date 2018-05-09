@@ -79,7 +79,7 @@ sync func unregister_player(id, _user):
 		player_info.erase(str(id))
 	for x in $v.get_children():
 		print(x.name)
-		if x.text == _user:
+		if x.text == _user['name']:
 			$v.remove_child(x)
 	# Call function to update lobby UI here
 
