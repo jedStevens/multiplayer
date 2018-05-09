@@ -39,7 +39,9 @@ func _player_connected(id):
 func _player_disconnected(id):
 	print("Player left: ", player_info[id], " ", id)
 	
-	rpc("unregister_player", id, player_info[str(id)])
+	rpc("unregister_player", id, player_info[id])
+	if id in player_info.keys():
+		print("LEFT OVER: ",id)
 	
 
 func _connected_ok():
