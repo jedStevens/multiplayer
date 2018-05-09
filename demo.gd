@@ -37,7 +37,7 @@ func _player_connected(id):
     pass # Will go unused, not useful here
 
 func _player_disconnected(id):
-	print("Player left: ", id)
+	print("Player left: ", player_info[id], " ", id)
 	
 	rpc("unregister_player", (id))
 
@@ -47,6 +47,7 @@ func _connected_ok():
 
 func _server_disconnected():
 	print("kicked offline by server")
+	rpc("unregister_player", get_tree().get_network_unique_id())
 
 func _connected_fail():
 	print("Connection Failure")
@@ -56,7 +57,7 @@ remote func register_player(id, info):
 	player_info[id] = info
 	# If I'm the server, let the new guy know about existing players
 	if get_tree().is_network_server():
-		print("Got new player: ", info['name'], id)
+		print("Got new player: ", info['name']+  " | ", id)
 	# Send my info to new player
 		rpc_id(id, "register_player", 1, my_info)
 		# Send the info of existing players
@@ -87,3 +88,4 @@ func _on_connect_pressed():
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_client(SERVER_IP, SERVER_PORT)
 	get_tree().set_network_peer(peer)
+	print("As a Client, My info is: ", username, "  ", get_tree().get_network_unique_id())
