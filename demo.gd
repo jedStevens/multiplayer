@@ -41,9 +41,10 @@ func _player_disconnected(id):
 	
 	rpc("unregister_player", id, player_info[id])
 	if id in player_info.keys():
+		print("Safe removal")
 		player_info.erase(id)
-	if id in player_info.keys():
-		print( "left over", str(id))
+	
+	print("POST: ",player_info)
 	
 
 func _connected_ok():
@@ -57,7 +58,7 @@ func _server_disconnected():
 func _connected_fail():
 	print("Connection Failure")
 
-remote func register_player(id, info):
+sync func register_player(id, info):
 	# Store the info
 	player_info[id] = info
 	# If I'm the server, let the new guy know about existing players
@@ -80,19 +81,24 @@ remote func register_player(id, info):
 		$v.add_child(node)
 
 sync func unregister_player(id, _user):
-	if str(id) in player_info.keys():
+	if id in player_info.keys():
 		player_info.erase(id)
+	
 	for x in $v.get_children():
-		print(x.text)
+		print("UI: ",x.text, " == ", _user['name'], " is ",x.text == _user['name'] )
 		if x.text == _user['name']:
+			
 			$v.remove_child(x)
 	# Call function to update lobby UI here
 
 func _on_connect_pressed():
 	if get_tree().get_network_unique_id() != 0:
 		rpc("unregister_player", get_tree().get_network_unique_id(), my_info)
+		get_tree().network_peer = null
 	for x in $v.get_children():
 		$v.remove_child(x)
+	username = NameGenerator.gen_name()
+	my_info['name'] = username
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_client(SERVER_IP, SERVER_PORT)
 	get_tree().set_network_peer(peer)
