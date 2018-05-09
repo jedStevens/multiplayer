@@ -34,22 +34,20 @@ func _ready():
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
 
 func _player_connected(id):
-    pass # Will go unused, not useful here
+	pass
 
 func _player_disconnected(id):
-	print("Player left: ", player_info[id], " ", id)
-	
-	rpc("unregister_player", id, player_info[id])
-	if id in player_info.keys():
-		print("Safe removal")
-		player_info.erase(id)
-	
-	print("POST: ",player_info)
-	
+	if player_info.has(id):
+		print("Player left: ", player_info[id], " ", id)
+		
+		rpc("unregister_player", id, player_info[id])
+		if id in player_info.keys():
+			print("Safe removal")
+			player_info.erase(id)
 
 func _connected_ok():
-    # Only called on clients, not server. Send my ID and info to all the other peers
-    rpc("register_player", get_tree().get_network_unique_id(), my_info)
+	rpc("register_player", get_tree().get_network_unique_id(), my_info)
+	print("I'm connected, do others know about me?")
 
 func _server_disconnected():
 	print("kicked offline by server")
@@ -83,12 +81,7 @@ sync func register_player(id, info):
 sync func unregister_player(id, _user):
 	if id in player_info.keys():
 		player_info.erase(id)
-	
-	for x in $v.get_children():
-		print("UI: ",x.text, " == ", _user['name'], " is ",x.text == _user['name'] )
-		if x.text == _user['name']:
-			
-			$v.remove_child(x)
+	remove_ui_by_name(_user['name'])
 	# Call function to update lobby UI here
 
 func _on_connect_pressed():
@@ -103,3 +96,21 @@ func _on_connect_pressed():
 	peer.create_client(SERVER_IP, SERVER_PORT)
 	get_tree().set_network_peer(peer)
 	print("As a Client, My info is: ", username, "  ", get_tree().get_network_unique_id())
+
+func add_ui_by_name(_username):
+	pass
+
+func add_ui_from_players(players):
+	for x in $v.get_children():
+		$v.remove_child(x)
+	for k in players.keys():
+		var player = players[k]
+		var node = Label.new()
+		node.name = str(player['name'])
+		node.text = player["name"]
+		$v.add_child(node)
+	
+func remove_ui_by_name(_username):
+	for x in $v.get_children():
+		if x.text == _username:
+			$v.remove_child(x)
