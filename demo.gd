@@ -116,3 +116,4 @@ func remove_ui_by_name(_username):
 	for x in $v.get_children():
 		if x.text == _username:
 			$v.remove_child(x)
+
