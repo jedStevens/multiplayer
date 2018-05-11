@@ -68,6 +68,7 @@ remote func register_player(id, info):
 		for peer_id in player_info.keys():
 			print("Sending: ", player_info[peer_id]['name'])
 			rpc_id(id, "register_player", peer_id, player_info[peer_id])
+			rpc_id(peer_id, "register_player", id, player_info[id])
 	
 	# Call function to update lobby UI here
 	for x in $v.get_children():
