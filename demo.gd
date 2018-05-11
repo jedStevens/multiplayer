@@ -56,7 +56,7 @@ func _server_disconnected():
 func _connected_fail():
 	print("Connection Failure")
 
-sync func register_player(id, info):
+remote func register_player(id, info):
 	# Store the info
 	player_info[id] = info
 	# If I'm the server, let the new guy know about existing players
@@ -65,7 +65,8 @@ sync func register_player(id, info):
 	# Send my info to new player
 		rpc_id(id, "register_player", 1, my_info)
 		# Send the info of existing players
-		for peer_id in player_info:
+		for peer_id in player_info.keys():
+			print("Sending: ", player_info[peer_id]['name'])
 			rpc_id(id, "register_player", peer_id, player_info[peer_id])
 	
 	# Call function to update lobby UI here
