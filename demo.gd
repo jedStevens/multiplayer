@@ -16,7 +16,7 @@ var player_info = {}
 var my_info = { 'name' : username, 'favorite_color' : Color8(255, 0, 255) }
 
 func _ready():
-	seed(OS.get_unix_time())
+	randomize()
 	
 	if OS.get_environment("JED_SERVER") == "1":
 		print("Running as server")
@@ -34,11 +34,11 @@ func _ready():
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
 
 func _player_connected(id):
-	pass
+	$chat.log_text("*just connected*", id)
 
 func _player_disconnected(id):
 	if player_info.has(id):
-		print("Player left: ", player_info[id], " ", id)
+		$chat.log_text("Player left: ", player_info[id], " ", id)
 		
 		rpc("unregister_player", id, player_info[id])
 		if id in player_info.keys():
@@ -47,6 +47,7 @@ func _player_disconnected(id):
 
 func _connected_ok():
 	rpc("register_player", get_tree().get_network_unique_id(), my_info)
+	$chat.rpc("clear_log")
 	print("I'm connected, do others know about me?")
 
 func _server_disconnected():

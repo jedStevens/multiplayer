@@ -88,7 +88,7 @@ size_flags_vertical = 1
 alignment = 0
 script = ExtResource( 2 )
 
-[node name="log" type="RichTextLabel" parent="chat" index="0"]
+[node name="log" type="Label" parent="chat" index="0"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -103,17 +103,11 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-bbcode_enabled = false
-bbcode_text = ""
-visible_characters = 256
-percent_visible = 1.0
-meta_underlined = true
-tab_size = 4
 text = "<this is dummy _text>"
-scroll_active = true
-scroll_following = false
-selection_enabled = false
-override_selected_font_color = false
+valign = 2
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
 _sections_unfolded = [ "Rect" ]
 
 [node name="input" type="TextEdit" parent="chat" index="1"]

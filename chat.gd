@@ -14,3 +14,6 @@ sync func log_text(msg, from_id):
 
 func _on_send_pressed():
 	send_message($input.text)
+
+sync func clear_log():
+	$log.text = ""
