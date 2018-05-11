@@ -34,11 +34,11 @@ func _ready():
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
 
 func _player_connected(id):
-	$chat.log_text("*just connected*", id)
+	pass
 
 func _player_disconnected(id):
 	if player_info.has(id):
-		$chat.log_text("Player left: ", player_info[id], " ", id)
+		$chat.log_text("Player left: " + player_info[id]['name'], id)
 		
 		rpc("unregister_player", id, player_info[id])
 		if id in player_info.keys():
@@ -48,7 +48,6 @@ func _player_disconnected(id):
 func _connected_ok():
 	rpc("register_player", get_tree().get_network_unique_id(), my_info)
 	$chat.rpc("clear_log")
-	print("I'm connected, do others know about me?")
 
 func _server_disconnected():
 	print("kicked offline by server")
@@ -70,6 +69,7 @@ remote func register_player(id, info):
 			print("Sending: ", player_info[peer_id]['name'])
 			rpc_id(id, "register_player", peer_id, player_info[peer_id])
 			rpc_id(peer_id, "register_player", id, player_info[id])
+			$chat.rpc_id(peer_id, "log_text", "*just connected*", id)
 	
 	# Call function to update lobby UI here
 	for x in $v.get_children():
